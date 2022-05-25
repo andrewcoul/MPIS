@@ -17,5 +17,8 @@
 4) Activate the virtual environment you just created with the command: **mpis\Scripts\activate.bat**
 5) Install dependencies using the command: **pip install -r requirements.txt**
 
-## Install Dependencies
-1) 
+   **NOTE: Only steps 1, 2, and 4 need to be done after the initial setup**
+   
+## Setup Files
+1) Place the real images in **./data/imgs** and place the image masks in **./data/masks**
+2) After model is trained and predictions have been made, relocate the masks and 
