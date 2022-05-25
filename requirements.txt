@@ -1,0 +1,9 @@
+matplotlib
+numpy
+Pillow
+torch
+torchvision
+tqdm
+wandb
+segmentation_models_pytorch
+albumentations
