@@ -1,189 +1,95 @@
-# U-Net: Semantic segmentation with PyTorch
-<a href="#"><img src="https://img.shields.io/github/workflow/status/milesial/PyTorch-UNet/Publish%20Docker%20image?logo=github&style=for-the-badge" /></a>
-<a href="https://hub.docker.com/r/milesial/unet"><img src="https://img.shields.io/badge/docker%20image-available-blue?logo=Docker&style=for-the-badge" /></a>
-<a href="https://pytorch.org/"><img src="https://img.shields.io/badge/PyTorch-v1.9.0-red.svg?logo=PyTorch&style=for-the-badge" /></a>
-<a href="#"><img src="https://img.shields.io/badge/python-v3.6+-blue.svg?logo=python&style=for-the-badge" /></a>
+![tamu_texas_a-m-university-logo](https://user-images.githubusercontent.com/36116977/170396505-c2bc0ac1-d5bf-4485-93d3-6e637a671024.png)
+![UT-Logo](https://user-images.githubusercontent.com/36116977/170396567-618abb90-fdfb-45ec-ba47-5549ad950cd0.png)
 
-![input and output for a random image in the test dataset](https://i.imgur.com/GD8FcB7.png)
+# MPIS - Material Phase Image Segmentation
+## Created by Andrew Coulson and William Avery with the use of Pytorch-UNet architecture by milesial at https://github.com/milesial/Pytorch-UNet
 
+# Project Overview
+The purpose of this project was to develop a neural network to aid in the characterization of material microstructures.  
 
-Customized implementation of the [U-Net](https://arxiv.org/abs/1505.04597) in PyTorch for Kaggle's [Carvana Image Masking Challenge](https://www.kaggle.com/c/carvana-image-masking-challenge) from high definition images.
+The functional goal is to reach a point in which a researcher can give the model MicroCT scans of various common materials/application and get a segmented image stack in return.  
 
-- [Quick start](#quick-start)
-  - [Without Docker](#without-docker)
-  - [With Docker](#with-docker)
-- [Description](#description)
-- [Usage](#usage)
-  - [Docker](#docker)
-  - [Training](#training)
-  - [Prediction](#prediction)
-- [Weights & Biases](#weights--biases)
-- [Pretrained model](#pretrained-model)
-- [Data](#data)
+Semantic Image segmentation is the process of classifying different parts of an image into several predefined categories.  
 
-## Quick start
+![Capture](https://user-images.githubusercontent.com/36116977/170401304-ebd647d4-552b-47f2-8119-4ac40ce83f40.PNG)  
+*Segmentation of objects in image of bike race*
 
-### Without Docker
+![Capture](https://user-images.githubusercontent.com/36116977/170401954-182e15cb-3a11-4196-a0bc-66ebb491558a.PNG)  
+*Segmentation of glass fibers in fiber reinforced bentonite*
 
-1. [Install CUDA](https://developer.nvidia.com/cuda-downloads)
+The process is done using a “convolutional neural network“. These CNNs are a specific type of neural network in which the input undergoes a “convolution” where it is down sampled in resolution, but up sampled in depth.  
 
-2. [Install PyTorch](https://pytorch.org/get-started/locally/)
+Image segmentation has the unique requirement of not only identifying what something in an image is, but also where in the image it is located. The network architecture we used to overcome this pitfall of CNNs is called “UNet”  
 
-3. Install dependencies
-```bash
-pip install -r requirements.txt
-```
+UNet performs some number of convolutional operations which decrease the input resolution and increase the depth, and then deconvolutes the input to determine the relative locations of the segmented portions of the image. The output of such an operation is a set of masks predicting the location of the desired classes.
 
-4. Download the data and run training:
-```bash
-bash scripts/download_data.sh
-python train.py --amp
-```
+![68747470733a2f2f692e696d6775722e636f6d2f6a6544567071462e706e67](https://user-images.githubusercontent.com/36116977/170402392-d4126d05-ca39-4628-b724-f747b0949ede.png)
 
-### With Docker
+Example Application: Finding the location of the glass fibers in a sample of fiber-reinforced bentonite. In this example, a researcher would input the images from a MicroCT scan of the sample to the model and would get a set of images predicting where the fibers are in return.  
 
-1. [Install Docker 19.03 or later:](https://docs.docker.com/get-docker/)
-```bash
-curl https://get.docker.com | sh && sudo systemctl --now enable docker
-```
-2. [Install the NVIDIA container toolkit:](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
-```bash
-distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
-   && curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add - \
-   && curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
-sudo apt-get update
-sudo apt-get install -y nvidia-docker2
-sudo systemctl restart docker
-```
-3. [Download and run the image:](https://hub.docker.com/repository/docker/milesial/unet)
-```bash
-sudo docker run --rm --shm-size=8g --ulimit memlock=-1 --gpus all -it milesial/unet
-```
+Training data should be created using an image processing software such as Fiji.
+The user should take the images they wish to create a model for and create segmented image masks showing the location of the desired objects.
 
-4. Download the data and run training:
-```bash
-bash scripts/download_data.sh
-python train.py --amp
-```
+Once the user has created the masks, or “ground truths”, they can train a model that can be used for all similar applications in the future. That is, if a user commonly need to identify and characterize cracks in concrete, they only need to train the model on one set of scans. It is possible to achieve better results by training on more images.
 
-## Description
-This model was trained from scratch with 5k images and scored a [Dice coefficient](https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient) of 0.988423 on over 100k test images.
+Accuracy was measured using the Sørensen–Dice Coefficient  
+![Capture](https://user-images.githubusercontent.com/36116977/170404826-7d331458-0c4b-4ef1-861e-d017fa7b8bf1.PNG)
 
-It can be easily used for multiclass segmentation, portrait segmentation, medical segmentation, ...
+Loss was calculated using a combination of the Sørensen–Dice loss above and and cross entropy loss below
+![Capture](https://user-images.githubusercontent.com/36116977/170406324-95054893-d7af-459c-88f9-636a705ba798.jpg)
+
+Models converged at roughly 0.78 Dice score on the validation set, but the scores on the test set varied. Resulting test Sørensen–Dice scores achieved on dataset of glass fiber reinforced bentonite clay microct scans using a number of pretrained encoders is detailed in the table below  
+![Capture](https://user-images.githubusercontent.com/36116977/170406992-7a12b85e-72de-42e2-9ef7-e98bbeb8ae92.PNG)
 
 
-## Usage
-**Note : Use Python 3.6 or newer**
-
-### Docker
-
-A docker image containing the code and the dependencies is available on [DockerHub](https://hub.docker.com/repository/docker/milesial/unet).
-You can download and jump in the container with ([docker >=19.03](https://docs.docker.com/get-docker/)):
-
-```console
-docker run -it --rm --shm-size=8g --ulimit memlock=-1 --gpus all milesial/unet
-```
+MPIS is a machine learning application utilizing a UNet architecture to perform semantic image segmentation on material microstructures. Each unique application needs to be trained, however once a model is created for that application it can be used for all similar applications in perpetuity.
 
 
-### Training
-
-```console
-> python train.py -h
-usage: train.py [-h] [--epochs E] [--batch-size B] [--learning-rate LR]
-                [--load LOAD] [--scale SCALE] [--validation VAL] [--amp]
-
-Train the UNet on images and target masks
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --epochs E, -e E      Number of epochs
-  --batch-size B, -b B  Batch size
-  --learning-rate LR, -l LR
-                        Learning rate
-  --load LOAD, -f LOAD  Load model from a .pth file
-  --scale SCALE, -s SCALE
-                        Downscaling factor of the images
-  --validation VAL, -v VAL
-                        Percent of the data that is used as validation (0-100)
-  --amp                 Use mixed precision
-```
-
-By default, the `scale` is 0.5, so if you wish to obtain better results (but use more memory), set it to 1.
-
-Automatic mixed precision is also available with the `--amp` flag. [Mixed precision](https://arxiv.org/abs/1710.03740) allows the model to use less memory and to be faster on recent GPUs by using FP16 arithmetic. Enabling AMP is recommended.
 
 
-### Prediction
-
-After training your model and saving it to `MODEL.pth`, you can easily test the output masks on your images via the CLI.
-
-To predict a single image and save it:
-
-`python predict.py -i image.jpg -o output.jpg`
-
-To predict a multiple images and show them without saving them:
-
-`python predict.py -i image1.jpg image2.jpg --viz --no-save`
-
-```console
-> python predict.py -h
-usage: predict.py [-h] [--model FILE] --input INPUT [INPUT ...] 
-                  [--output INPUT [INPUT ...]] [--viz] [--no-save]
-                  [--mask-threshold MASK_THRESHOLD] [--scale SCALE]
-
-Predict masks from input images
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --model FILE, -m FILE
-                        Specify the file in which the model is stored
-  --input INPUT [INPUT ...], -i INPUT [INPUT ...]
-                        Filenames of input images
-  --output INPUT [INPUT ...], -o INPUT [INPUT ...]
-                        Filenames of output images
-  --viz, -v             Visualize the images as they are processed
-  --no-save, -n         Do not save the output masks
-  --mask-threshold MASK_THRESHOLD, -t MASK_THRESHOLD
-                        Minimum probability value to consider a mask pixel white
-  --scale SCALE, -s SCALE
-                        Scale factor for the input images
-```
-You can specify which model file to use with `--model MODEL.pth`.
-
-## Weights & Biases
-
-The training progress can be visualized in real-time using [Weights & Biases](https://wandb.ai/).  Loss curves, validation curves, weights and gradient histograms, as well as predicted masks are logged to the platform.
-
-When launching a training, a link will be printed in the console. Click on it to go to your dashboard. If you have an existing W&B account, you can link it
- by setting the `WANDB_API_KEY` environment variable. If not, it will create an anonymous run which is automatically deleted after 7 days.
 
 
-## Pretrained model
-A [pretrained model](https://github.com/milesial/Pytorch-UNet/releases/tag/v3.0) is available for the Carvana dataset. It can also be loaded from torch.hub:
+# Instructions for Use
 
-```python
-net = torch.hub.load('milesial/Pytorch-UNet', 'unet_carvana', pretrained=True, scale=0.5)
-```
-Available scales are 0.5 and 1.0.
+## Setup Github
+1) Set up a github account at https://github.com/
+2) Download and install Guthub Desktop at https://desktop.github.com/ and login to the desktop client
+3) Go to file -> Clone Repository -> URL and enter this website URL into the box
+4) Choose a location on your device where you want the repository to be downloaded
+5) You are good to go. You can pull future updates to the program through the check origin and pull button on the desktop client.
 
-## Data
-The Carvana data is available on the [Kaggle website](https://www.kaggle.com/c/carvana-image-masking-challenge/data).
+## Setup Weights and Biases
+1) Set up a github account at https://wandb.ai/
+2) Navigate to your newly created profile and create a new project under the desired team or individual
+3) Navigate to wandb settings and copy your api key
+4) In the command line, type the command **wandb login**
+5) Use your wandb username and api key as your password to login
 
-You can also download it using the helper script:
+## Setup Python Virtual Environment
+1) Open the windows command line
+2) Navigate to the location of the repository by using the command: **cd C://...**
+3) Create a python virtual environment for the project using the command: **python -m venv mpis** 
+4) Activate the virtual environment you just created with the command: **mpis\Scripts\activate.bat**
+5) Install dependencies using the command: **pip install -r requirements.txt**
 
-```
-bash scripts/download_data.sh
-```
+   **NOTE: Only steps 1, 2, and 4 need to be done after the initial setup**
+   
+## Setup Files
+1) Place the real images in **./data/imgs** and place the image masks in **./data/masks**
+2) After model is trained and predictions have been made, relocate the masks and predictions to the corresponding files in **./data/PREDICT/**
 
-The input images and target masks should be in the `data/imgs` and `data/masks` folders respectively (note that the `imgs` and `masks` folder should not contain any sub-folder or any other files, due to the greedy data-loader). For Carvana, images are RGB and masks are black and white.
+## Train Model
+1) Once you have activated the python virtual environment, you can use the following command to train the model: **python train.py**
+2) The following flags can be added to the command to change certain paramaters within the program:  
+        -e: specify the number of epochs to train for      
+        -v: percentage of the total dataset which will be used as validation    
+        -b: batch size which will be used to update weights  
+        --scale: scale factor applied to data for training  
+        --pretrained: enable pretrained encoder specified in program  
+3) Once the model training is complete, the desired model checkpoint can be retrieved from **./checkpoints**
 
-You can use your own dataset as long as you make sure it is loaded properly in `utils/data_loading.py`.
-
-
----
-
-Original paper by Olaf Ronneberger, Philipp Fischer, Thomas Brox:
-
-[U-Net: Convolutional Networks for Biomedical Image Segmentation](https://arxiv.org/abs/1505.04597)
-
-![network architecture](https://i.imgur.com/jeDVpqF.png)
+## Predict and Check Accuracy
+1) Change the proper parameters in **test.py** to use the correct encoder and model name
+2) In your python virtual environment run the command **python test.py**
+3) The output will include prediction images in **./data/PREDICT/preds/** and a dice score in the terminal
+4) For future models, the dice score is unnecessary and only the predictcions are relevant
