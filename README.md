@@ -2,7 +2,7 @@
 ![UT-Logo](https://user-images.githubusercontent.com/36116977/170396567-618abb90-fdfb-45ec-ba47-5549ad950cd0.png)
 
 # MPIS - Material Phase Image Segmentation
-## Created with the use of Pytorch-UNet architecture by milesial at https://github.com/milesial/Pytorch-UNet
+## Created by Andrew Coulson and William Avery with the use of Pytorch-UNet architecture by milesial at https://github.com/milesial/Pytorch-UNet
 
 # Instructions for Use
 
@@ -35,10 +35,16 @@
 
 ## Train Model
 1) Once you have activated the python virtual environment, you can use the following command to train the model: **python train.py**
-2) The following flags can be added to the command to change certain paramaters within the program:
+2) The following flags can be added to the command to change certain paramaters within the program:  
+        -e: specify the number of epochs to train for      
+        -v: percentage of the total dataset which will be used as validation    
+        -b: batch size which will be used to update weights  
+        --scale: scale factor applied to data for training  
+        --pretrained: enable pretrained encoder specified in program  
+3) Once the model training is complete, the desired model checkpoint can be retrieved from **./checkpoints**
 
-      -e: specify the number of epochs to train for      
-      -v: percentage of the total dataset which will be used as validation    
-      -b: batch size which will be used to update weights
-      --scale: scale factor applied to data for training 
-      --pretrained: enable pretrained encoder specified in program
+## Predict and Check Accuracy
+1) Change the proper parameters in **test.py** to use the correct encoder and model name
+2) In your python virtual environment run the command **python test.py**
+3) The output will include prediction images in **./data/PREDICT/preds/** and a dice score in the terminal
+4) For future models, the dice score is unnecessary and only the predictcions are relevant
