@@ -4,6 +4,40 @@
 # MPIS - Material Phase Image Segmentation
 ## Created by Andrew Coulson and William Avery with the use of Pytorch-UNet architecture by milesial at https://github.com/milesial/Pytorch-UNet
 
+# Project Overview
+The purpose of this project was to develop a neural network to aid in the characterization of material microstructures.  
+
+The functional goal is to reach a point in which a researcher can give the model MicroCT scans of various common materials/application and get a segmented image stack in return.  
+
+Semantic Image segmentation is the process of classifying different parts of an image into several predefined categories.  
+
+![Capture](https://user-images.githubusercontent.com/36116977/170401304-ebd647d4-552b-47f2-8119-4ac40ce83f40.PNG)  
+*Segmentation of objects in image of bike race*
+
+![Capture](https://user-images.githubusercontent.com/36116977/170401954-182e15cb-3a11-4196-a0bc-66ebb491558a.PNG)  
+*Segmentation of glass fibers in fiber reinforced bentonite*
+
+The process is done using a “convolutional neural network“. These CNNs are a specific type of neural network in which the input undergoes a “convolution” where it is down sampled in resolution, but up sampled in depth.  
+
+Image segmentation has the unique requirement of not only identifying what something in an image is, but also where in the image it is located. The network architecture we used to overcome this pitfall of CNNs is called “UNet”  
+
+UNet performs some number of convolutional operations which decrease the input resolution and increase the depth, and then deconvolutes the input to determine the relative locations of the segmented portions of the image. The output of such an operation is a set of masks predicting the location of the desired classes.
+
+![68747470733a2f2f692e696d6775722e636f6d2f6a6544567071462e706e67](https://user-images.githubusercontent.com/36116977/170402392-d4126d05-ca39-4628-b724-f747b0949ede.png)
+
+Example Application: Finding the location of the glass fibers in a sample of fiber-reinforced bentonite. In this example, a researcher would input the images from a MicroCT scan of the sample to the model and would get a set of images predicting where the fibers are in return.  
+
+Training data should be created using an image processing software such as Fiji.
+The user should take the images they wish to create a model for and create segmented image masks showing the location of the desired objects.
+
+Once the user has created the masks, or “ground truths”, they can train a model that can be used for all similar applications in the future. That is, if a user commonly need to identify and characterize cracks in concrete, they only need to train the model on one set of scans. It is possible to achieve better results by training on more images.
+
+MPIS is a machine learning application utilizing a UNet architecture to perform semantic image segmentation on material microstructures. Each unique application needs to be trained, however once a model is created for that application it can be used for all similar applications in perpetuity.
+
+
+
+
+
 # Instructions for Use
 
 ## Setup Github
