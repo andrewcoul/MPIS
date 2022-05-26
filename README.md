@@ -32,7 +32,18 @@ The user should take the images they wish to create a model for and create segme
 
 Once the user has created the masks, or “ground truths”, they can train a model that can be used for all similar applications in the future. That is, if a user commonly need to identify and characterize cracks in concrete, they only need to train the model on one set of scans. It is possible to achieve better results by training on more images.
 
+Accuracy was measured using the Sørensen–Dice Coefficient  
+![Capture](https://user-images.githubusercontent.com/36116977/170404826-7d331458-0c4b-4ef1-861e-d017fa7b8bf1.PNG)
+
+Loss was calculated using a combination of the Sørensen–Dice loss above and and cross entropy loss below
+![Capture](https://user-images.githubusercontent.com/36116977/170406324-95054893-d7af-459c-88f9-636a705ba798.jpg)
+
+Models converged at roughly 0.78 Dice score on the validation set, but the scores on the test set varied. Resulting test Sørensen–Dice scores achieved on dataset of glass fiber reinforced bentonite clay microct scans using a number of pretrained encoders is detailed in the table below  
+![Capture](https://user-images.githubusercontent.com/36116977/170406992-7a12b85e-72de-42e2-9ef7-e98bbeb8ae92.PNG)
+
+
 MPIS is a machine learning application utilizing a UNet architecture to perform semantic image segmentation on material microstructures. Each unique application needs to be trained, however once a model is created for that application it can be used for all similar applications in perpetuity.
+
 
 
 
