@@ -1,3 +1,6 @@
+![tamu_texas_a-m-university-logo](https://user-images.githubusercontent.com/36116977/170396505-c2bc0ac1-d5bf-4485-93d3-6e637a671024.png)
+![UT-Logo](https://user-images.githubusercontent.com/36116977/170396567-618abb90-fdfb-45ec-ba47-5549ad950cd0.png)
+
 # MPIS - Material Phase Image Segmentation
 ## Created with the use of Pytorch-UNet architecture by milesial at https://github.com/milesial/Pytorch-UNet
 
@@ -10,6 +13,13 @@
 4) Choose a location on your device where you want the repository to be downloaded
 5) You are good to go. You can pull future updates to the program through the check origin and pull button on the desktop client.
 
+## Setup Weights and Biases
+1) Set up a github account at https://wandb.ai/
+2) Navigate to your newly created profile and create a new project under the desired team or individual
+3) Navigate to wandb settings and copy your api key
+4) In the command line, type the command **wandb login**
+5) Use your wandb username and api key as your password to login
+
 ## Setup Python Virtual Environment
 1) Open the windows command line
 2) Navigate to the location of the repository by using the command: **cd C://...**
@@ -21,4 +31,6 @@
    
 ## Setup Files
 1) Place the real images in **./data/imgs** and place the image masks in **./data/masks**
-2) After model is trained and predictions have been made, relocate the masks and 
+2) After model is trained and predictions have been made, relocate the masks and predictions to the corresponding files in **./data/PREDICT/**
+
+## Train Model
