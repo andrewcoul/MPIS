@@ -34,3 +34,11 @@
 2) After model is trained and predictions have been made, relocate the masks and predictions to the corresponding files in **./data/PREDICT/**
 
 ## Train Model
+1) Once you have activated the python virtual environment, you can use the following command to train the model: **python train.py**
+2) The following flags can be added to the command to change certain paramaters within the program:
+
+      -e: specify the number of epochs to train for      
+      -v: percentage of the total dataset which will be used as validation    
+      -b: batch size which will be used to update weights
+      --scale: scale factor applied to data for training 
+      --pretrained: enable pretrained encoder specified in program
