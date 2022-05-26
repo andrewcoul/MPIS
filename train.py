@@ -185,7 +185,7 @@ if __name__ == '__main__':
     # n_channels=3 for RGB images
     # n_classes is the number of probabilities you want to get per pixel
     if args.pretrained:
-        net = smp.Unet(encoder_name='vgg19_bn', encoder_weights='imagenet', in_channels=3, classes=2)
+        net = smp.Unet(encoder_name='resnet50', encoder_weights='imagenet', in_channels=3, classes=2)
         logging.info(f'Network:\n'
                 f'\t{3} input channels\n'
                 f'\t{1} output channels (classes)\n')
